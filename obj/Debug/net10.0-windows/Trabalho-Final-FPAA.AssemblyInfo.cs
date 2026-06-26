@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Trabalho-Final-FPAA")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+469efd5b1a0ee025939d173dccf85184b54a7bb0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2d19202e5483fa671fa4a90e2b2cfa5196b7c527")]
 [assembly: System.Reflection.AssemblyProductAttribute("Trabalho-Final-FPAA")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Trabalho-Final-FPAA")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

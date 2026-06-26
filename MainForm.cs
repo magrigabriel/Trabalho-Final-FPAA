@@ -1,87 +1,72 @@
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Trabalho
 {
     public partial class MainForm : Form
     {
-        // ═══════════════════════════════════════════════════════
-        // Paleta de cores — GTA San Andreas
-        // ═══════════════════════════════════════════════════════
-        private static readonly Color BG_DARK = Color.FromArgb(12, 12, 12);
-        private static readonly Color BG_PANEL = Color.FromArgb(24, 24, 28);
-        private static readonly Color ORANGE = Color.FromArgb(240, 150, 15);
-        private static readonly Color GOLD = Color.FromArgb(245, 197, 24);
-        private static readonly Color TEXT_LIGHT = Color.FromArgb(230, 230, 230);
-        private static readonly Color TEXT_DIM = Color.FromArgb(160, 160, 160);
-        private static readonly Color INPUT_BG = Color.FromArgb(38, 38, 42);
-        private static readonly Color TAB_BG = Color.FromArgb(35, 35, 40);
-        private static readonly Color ERROR_RED = Color.FromArgb(220, 50, 50);
+        // ─────────────────────────────────────────────────
+        // Paleta "Midnight Indigo"
+        // ─────────────────────────────────────────────────
+        private static readonly Color BG_DEEP    = Color.FromArgb(13, 15, 30);
+        private static readonly Color BG_CARD    = Color.FromArgb(22, 25, 48);
+        private static readonly Color BG_INPUT   = Color.FromArgb(30, 34, 60);
+        private static readonly Color PRIMARY    = Color.FromArgb(99, 102, 241);
+        private static readonly Color PRIMARY_LT = Color.FromArgb(129, 140, 248);
+        private static readonly Color ACCENT     = Color.FromArgb(34, 211, 238);
+        private static readonly Color TEXT_MAIN  = Color.FromArgb(241, 245, 249);
+        private static readonly Color TEXT_DIM   = Color.FromArgb(148, 163, 184);
+        private static readonly Color ERROR_RED  = Color.FromArgb(239, 68, 68);
+        private static readonly Color SUCCESS    = Color.FromArgb(16, 185, 129);
 
-        // Lista de referências aos TextBoxes de cada cenário
         private readonly List<(TextBox helena, TextBox marcos)> _scenarioInputs = new();
 
-        // ═══════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────
+        // Win32 API para reproduzir MP3
+        // ─────────────────────────────────────────────────
+        [DllImport("winmm.dll", CharSet = CharSet.Auto)]
+        private static extern int mciSendString(string command, IntPtr buffer, int bufferSize, IntPtr callback);
+
+        // ─────────────────────────────────────────────────
         // Construtor
-        // ═══════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────
         public MainForm()
         {
             InitializeComponent();
             SetupEvents();
-            SetupInitialState();
         }
 
         private void SetupEvents()
         {
-            this.btnConfirmar.Click += BtnConfirmar_Click;
+            this.nudCenarios.ValueChanged += NudCenarios_ValueChanged;
             this.btnExecutar.Click += BtnExecutar_Click;
             this.btnLimpar.Click += BtnLimpar_Click;
-            this.tabCenarios.DrawItem += TabCenarios_DrawItem;
             this.Load += MainForm_Load;
             this.Resize += MainForm_Resize;
         }
 
-        private void SetupInitialState()
-        {
-            tabCenarios.Visible = false;
-            btnExecutar.Enabled = false;
-            btnLimpar.Enabled = false;
-            ShowWelcomeMessage();
-        }
-
-        // ═══════════════════════════════════════════════════════
-        // Mensagem de boas-vindas
-        // ═══════════════════════════════════════════════════════
-        private void ShowWelcomeMessage()
-        {
-            rtbResultados.Clear();
-            AppendColoredText("★ BEM-VINDO AO LCS ★\n\n", ORANGE, "Impact", 16f);
-            AppendColoredText("  1.  Selecione a quantidade de cenários (1 a 10)\n", TEXT_LIGHT);
-            AppendColoredText("  2.  Clique em CONFIRMAR\n", TEXT_LIGHT);
-            AppendColoredText("  3.  Preencha as sequências da Helena e do Marcos\n", TEXT_LIGHT);
-            AppendColoredText("  4.  Clique em ★ EXECUTAR LCS ★\n\n", TEXT_LIGHT);
-            AppendColoredText("  As sequências devem ter de 1 a 80 caracteres (letras minúsculas).\n", TEXT_DIM);
-            AppendColoredText("  O algoritmo encontrará todas as subsequências comuns mais longas.\n", TEXT_DIM);
-        }
-
-        // ═══════════════════════════════════════════════════════
-        // Eventos de layout
-        // ═══════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────
+        // Layout
+        // ─────────────────────────────────────────────────
         private void MainForm_Load(object? sender, EventArgs e)
         {
             CenterActionButtons();
+            AddScenarioCard(1);
+            ShowWelcomeMessage();
         }
 
         private void MainForm_Resize(object? sender, EventArgs e)
         {
             CenterActionButtons();
+            UpdateCardWidths();
         }
 
         private void CenterActionButtons()
         {
             if (pnlActions == null || btnExecutar == null || btnLimpar == null) return;
 
-            int gap = 25;
+            int gap = 20;
             int totalWidth = btnExecutar.Width + gap + btnLimpar.Width;
             int startX = (pnlActions.Width - totalWidth) / 2;
             int centerY = (pnlActions.Height - btnExecutar.Height) / 2;
@@ -90,108 +75,193 @@ namespace Trabalho
             btnLimpar.Location = new Point(startX + btnExecutar.Width + gap, centerY);
         }
 
-        // ═══════════════════════════════════════════════════════
-        // CONFIRMAR — Gera as abas de cenários
-        // ═══════════════════════════════════════════════════════
-        private void BtnConfirmar_Click(object? sender, EventArgs e)
+        private void UpdateCardWidths()
         {
-            int count = (int)nudCenarios.Value;
-
-            tabCenarios.TabPages.Clear();
-            _scenarioInputs.Clear();
-
-            for (int i = 1; i <= count; i++)
+            int cardWidth = GetCardWidth();
+            foreach (Control c in pnlInput.Controls)
             {
-                tabCenarios.TabPages.Add(CreateScenarioTab(i));
+                if (c is Panel) c.Width = cardWidth;
             }
-
-            tabCenarios.Visible = true;
-            btnExecutar.Enabled = true;
-            btnLimpar.Enabled = true;
-            tabCenarios.Invalidate();
         }
 
-        private TabPage CreateScenarioTab(int number)
+        private int GetCardWidth()
         {
-            TabPage page = new TabPage($"CENÁRIO {number}");
-            page.BackColor = BG_PANEL;
-            page.Padding = new Padding(20);
+            int scrollbar = SystemInformation.VerticalScrollBarWidth;
+            return pnlInput.ClientSize.Width - 30 - scrollbar;
+        }
 
-            // ── Label Helena ──
+        // ─────────────────────────────────────────────────
+        // Gerenciamento de cenários
+        // ─────────────────────────────────────────────────
+        private void NudCenarios_ValueChanged(object? sender, EventArgs e)
+        {
+            int newCount = (int)nudCenarios.Value;
+            int currentCount = _scenarioInputs.Count;
+
+            pnlInput.SuspendLayout();
+
+            if (newCount > currentCount)
+            {
+                for (int i = currentCount + 1; i <= newCount; i++)
+                    AddScenarioCard(i);
+            }
+            else if (newCount < currentCount)
+            {
+                for (int i = currentCount; i > newCount; i--)
+                    RemoveLastScenarioCard();
+            }
+
+            pnlInput.ResumeLayout(true);
+        }
+
+        private void AddScenarioCard(int number)
+        {
+            int padding = 15;
+            int cardWidth = GetCardWidth();
+            int cardHeight = 148;
+            int gap = 10;
+
+            int yOffset = padding;
+            if (pnlInput.Controls.Count > 0)
+            {
+                Control last = pnlInput.Controls[pnlInput.Controls.Count - 1];
+                yOffset = last.Bottom + gap;
+            }
+
+            Panel card = CreateScenarioCard(number, cardWidth);
+            card.Location = new Point(padding, yOffset);
+            card.Size = new Size(cardWidth, cardHeight);
+            card.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            pnlInput.Controls.Add(card);
+        }
+
+        private void RemoveLastScenarioCard()
+        {
+            if (pnlInput.Controls.Count > 0)
+            {
+                int idx = pnlInput.Controls.Count - 1;
+                Control card = pnlInput.Controls[idx];
+                pnlInput.Controls.RemoveAt(idx);
+                card.Dispose();
+            }
+            if (_scenarioInputs.Count > 0)
+                _scenarioInputs.RemoveAt(_scenarioInputs.Count - 1);
+        }
+
+        private Panel CreateScenarioCard(int number, int cardWidth)
+        {
+            Panel card = new Panel { BackColor = BG_CARD };
+
+            // Barra de acento à esquerda
+            card.Controls.Add(new Panel
+            {
+                Dock = DockStyle.Left,
+                Width = 3,
+                BackColor = PRIMARY
+            });
+
+            // Título
+            card.Controls.Add(new Label
+            {
+                Text = $"Cen\u00E1rio {number}",
+                Font = new Font("Segoe UI Semibold", 13f, FontStyle.Bold),
+                ForeColor = PRIMARY_LT,
+                Location = new Point(18, 8),
+                AutoSize = true
+            });
+
+            // Helena
             Label lblHelena = new Label
             {
                 Name = $"lblHelena{number}",
-                Text = $"SEQUÊNCIA {number} DA HELENA:  (0/80)",
-                Font = new Font("Impact", 14f),
-                ForeColor = ORANGE,
-                Location = new Point(25, 25),
+                Text = "Helena  (0/80)",
+                Font = new Font("Segoe UI", 10f),
+                ForeColor = ACCENT,
+                Location = new Point(18, 38),
                 AutoSize = true
             };
+            card.Controls.Add(lblHelena);
 
-            // ── TextBox Helena ──
             TextBox txtHelena = new TextBox
             {
                 Name = $"txtHelena{number}",
-                BackColor = INPUT_BG,
-                ForeColor = TEXT_LIGHT,
-                Font = new Font("Consolas", 12f),
+                BackColor = BG_INPUT,
+                ForeColor = TEXT_MAIN,
+                Font = new Font("Consolas", 11f),
                 BorderStyle = BorderStyle.FixedSingle,
                 MaxLength = 80,
-                Location = new Point(25, 60),
-                Size = new Size(870, 30),
+                Location = new Point(18, 60),
+                Size = new Size(cardWidth - 40, 26),
                 Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top
             };
-
             txtHelena.TextChanged += (s, e) =>
-            {
-                lblHelena.Text = $"SEQUÊNCIA {number} DA HELENA:  ({txtHelena.Text.Length}/80)";
-            };
+                lblHelena.Text = $"Helena  ({txtHelena.Text.Length}/80)";
+            card.Controls.Add(txtHelena);
 
-            // ── Label Marcos ──
+            // Marcos
             Label lblMarcos = new Label
             {
                 Name = $"lblMarcos{number}",
-                Text = $"SEQUÊNCIA {number} DO MARCOS:  (0/80)",
-                Font = new Font("Impact", 14f),
-                ForeColor = ORANGE,
-                Location = new Point(25, 115),
+                Text = "Marcos  (0/80)",
+                Font = new Font("Segoe UI", 10f),
+                ForeColor = ACCENT,
+                Location = new Point(18, 92),
                 AutoSize = true
             };
+            card.Controls.Add(lblMarcos);
 
-            // ── TextBox Marcos ──
             TextBox txtMarcos = new TextBox
             {
                 Name = $"txtMarcos{number}",
-                BackColor = INPUT_BG,
-                ForeColor = TEXT_LIGHT,
-                Font = new Font("Consolas", 12f),
+                BackColor = BG_INPUT,
+                ForeColor = TEXT_MAIN,
+                Font = new Font("Consolas", 11f),
                 BorderStyle = BorderStyle.FixedSingle,
                 MaxLength = 80,
-                Location = new Point(25, 150),
-                Size = new Size(870, 30),
+                Location = new Point(18, 114),
+                Size = new Size(cardWidth - 40, 26),
                 Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top
             };
-
             txtMarcos.TextChanged += (s, e) =>
-            {
-                lblMarcos.Text = $"SEQUÊNCIA {number} DO MARCOS:  ({txtMarcos.Text.Length}/80)";
-            };
+                lblMarcos.Text = $"Marcos  ({txtMarcos.Text.Length}/80)";
+            card.Controls.Add(txtMarcos);
 
-            page.Controls.AddRange(new Control[] { lblHelena, txtHelena, lblMarcos, txtMarcos });
             _scenarioInputs.Add((txtHelena, txtMarcos));
-            return page;
+            return card;
         }
 
-        // ═══════════════════════════════════════════════════════
-        // EXECUTAR LCS — Processa todos os cenários
-        // ═══════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────
+        // Áudio
+        // ─────────────────────────────────────────────────
+        private void PlayExecuteSound()
+        {
+            try
+            {
+                string audioPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "faaah.mp3");
+                if (File.Exists(audioPath))
+                {
+                    mciSendString("close executeSfx", IntPtr.Zero, 0, IntPtr.Zero);
+                    mciSendString($"open \"{audioPath}\" type mpegvideo alias executeSfx", IntPtr.Zero, 0, IntPtr.Zero);
+                    mciSendString("play executeSfx", IntPtr.Zero, 0, IntPtr.Zero);
+                }
+            }
+            catch
+            {
+                // Ignora erros de áudio silenciosamente
+            }
+        }
+
+        // ─────────────────────────────────────────────────
+        // Executar LCS
+        // ─────────────────────────────────────────────────
         private void BtnExecutar_Click(object? sender, EventArgs e)
         {
+            PlayExecuteSound();
             rtbResultados.Clear();
 
             if (_scenarioInputs.Count == 0)
             {
-                AppendColoredText("⚠  Nenhum cenário configurado. Clique em CONFIRMAR primeiro.\n", ERROR_RED);
+                AppendText("\u26A0  Nenhum cen\u00E1rio configurado.\n", ERROR_RED);
                 return;
             }
 
@@ -199,113 +269,84 @@ namespace Trabalho
             {
                 var (txtHelena, txtMarcos) = _scenarioInputs[i];
 
-                // Validação
                 if (string.IsNullOrWhiteSpace(txtHelena.Text) || string.IsNullOrWhiteSpace(txtMarcos.Text))
                 {
-                    AppendColoredText($"⚠  CENÁRIO {i + 1}: Preencha ambas as sequências!\n\n", ERROR_RED);
+                    AppendText($"\u26A0  Cen\u00E1rio {i + 1}: preencha ambas as sequ\u00EAncias.\n\n", ERROR_RED);
                     continue;
                 }
 
-                // Prepara as sequências (lowercase, trunca em 80)
                 string seqHelena = txtHelena.Text.ToLower();
                 string seqMarcos = txtMarcos.Text.ToLower();
                 if (seqHelena.Length > 80) seqHelena = seqHelena.Substring(0, 80);
                 if (seqMarcos.Length > 80) seqMarcos = seqMarcos.Substring(0, 80);
 
-                // Cabeçalho do cenário
-                AppendColoredText("════════════════════════════════════════════\n", GOLD);
-                AppendColoredText($"  ★  CENÁRIO {i + 1}  ★\n", ORANGE, "Impact", 13f);
-                AppendColoredText("════════════════════════════════════════════\n", GOLD);
-                AppendColoredText($"  Helena: \"{seqHelena}\"\n", TEXT_DIM);
-                AppendColoredText($"  Marcos: \"{seqMarcos}\"\n\n", TEXT_DIM);
+                // Cabeçalho
+                AppendText($"\u2500\u2500 Cen\u00E1rio {i + 1} ", PRIMARY, "Segoe UI Semibold", 12f);
+                AppendText(new string('\u2500', 36) + "\n", Color.FromArgb(50, 55, 85));
+                AppendText($"  Helena: \"{seqHelena}\"\n", TEXT_DIM);
+                AppendText($"  Marcos: \"{seqMarcos}\"\n\n", TEXT_DIM);
 
-                // Executa o algoritmo LCS
+                // Algoritmo
                 List<string> results = LcsAlgorithm.MatrizParaLCS(seqHelena, seqMarcos);
 
-                // Verifica resultados
                 if (results.Count == 0 || (results.Count == 1 && results[0] == ""))
                 {
-                    AppendColoredText("  Nenhuma subsequência comum encontrada.\n\n", TEXT_LIGHT);
+                    AppendText("  Nenhuma subsequ\u00EAncia comum encontrada.\n\n", TEXT_DIM);
                 }
                 else
                 {
-                    int lcsLength = results[0].Length;
-                    AppendColoredText($"  Tamanho da LCS: {lcsLength}\n", GOLD);
-                    AppendColoredText($"  Subsequências encontradas: {results.Count}\n\n", GOLD);
+                    int lcsLen = results[0].Length;
+                    AppendText($"  Tamanho da LCS: {lcsLen}    ", ACCENT);
+                    AppendText($"Encontradas: {results.Count}\n\n", ACCENT);
 
                     foreach (string palavra in results)
                     {
-                        AppendColoredText($"    ► {palavra}\n", TEXT_LIGHT);
+                        AppendText("    \u25B8 ", PRIMARY_LT);
+                        AppendText($"{palavra}\n", TEXT_MAIN);
                     }
                 }
-
-                AppendColoredText("\n", TEXT_LIGHT);
+                AppendText("\n", TEXT_MAIN);
             }
 
-            // Auto-scroll para o topo
             rtbResultados.SelectionStart = 0;
             rtbResultados.ScrollToCaret();
         }
 
-        // ═══════════════════════════════════════════════════════
-        // LIMPAR — Reseta tudo
-        // ═══════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────
+        // Limpar
+        // ─────────────────────────────────────────────────
         private void BtnLimpar_Click(object? sender, EventArgs e)
         {
-            tabCenarios.TabPages.Clear();
+            nudCenarios.ValueChanged -= NudCenarios_ValueChanged;
+
+            pnlInput.SuspendLayout();
+            pnlInput.Controls.Clear();
             _scenarioInputs.Clear();
-            tabCenarios.Visible = false;
-            btnExecutar.Enabled = false;
-            btnLimpar.Enabled = false;
             nudCenarios.Value = 1;
+            pnlInput.ResumeLayout();
+
+            nudCenarios.ValueChanged += NudCenarios_ValueChanged;
+            AddScenarioCard(1);
             ShowWelcomeMessage();
         }
 
-        // ═══════════════════════════════════════════════════════
-        // Custom draw — Abas estilo GTA SA
-        // ═══════════════════════════════════════════════════════
-        private void TabCenarios_DrawItem(object? sender, DrawItemEventArgs e)
+        // ─────────────────────────────────────────────────
+        // Boas-vindas
+        // ─────────────────────────────────────────────────
+        private void ShowWelcomeMessage()
         {
-            if (tabCenarios.TabPages.Count == 0) return;
-
-            TabPage page = tabCenarios.TabPages[e.Index];
-            bool isSelected = (e.Index == tabCenarios.SelectedIndex);
-
-            Color bgColor = isSelected ? ORANGE : TAB_BG;
-            Color textColor = isSelected ? BG_DARK : TEXT_LIGHT;
-
-            using (SolidBrush bgBrush = new SolidBrush(bgColor))
-            {
-                e.Graphics.FillRectangle(bgBrush, e.Bounds);
-            }
-
-            using (SolidBrush textBrush = new SolidBrush(textColor))
-            using (Font tabFont = new Font("Impact", 11f))
-            {
-                StringFormat sf = new StringFormat
-                {
-                    Alignment = StringAlignment.Center,
-                    LineAlignment = StringAlignment.Center
-                };
-                e.Graphics.DrawString(page.Text, tabFont, textBrush, e.Bounds, sf);
-            }
-
-            // Borda inferior laranja na aba selecionada
-            if (isSelected)
-            {
-                using (Pen pen = new Pen(GOLD, 3f))
-                {
-                    e.Graphics.DrawLine(pen,
-                        e.Bounds.Left, e.Bounds.Bottom - 1,
-                        e.Bounds.Right, e.Bounds.Bottom - 1);
-                }
-            }
+            rtbResultados.Clear();
+            AppendText("Bem-vindo ao LCS\n\n", PRIMARY, "Segoe UI Semibold", 13f);
+            AppendText("  1.  Ajuste a quantidade de cen\u00E1rios no canto superior direito\n", TEXT_MAIN);
+            AppendText("  2.  Preencha as sequ\u00EAncias de Helena e Marcos\n", TEXT_MAIN);
+            AppendText("  3.  Clique em Executar LCS\n\n", TEXT_MAIN);
+            AppendText("  Letras min\u00FAsculas \u00B7 1 a 80 caracteres por sequ\u00EAncia\n", TEXT_DIM);
         }
 
-        // ═══════════════════════════════════════════════════════
-        // Helper — Texto colorido no RichTextBox
-        // ═══════════════════════════════════════════════════════
-        private void AppendColoredText(string text, Color color, string? fontFamily = null, float? fontSize = null)
+        // ─────────────────────────────────────────────────
+        // Helper — texto colorido
+        // ─────────────────────────────────────────────────
+        private void AppendText(string text, Color color, string? fontFamily = null, float? fontSize = null)
         {
             rtbResultados.SelectionStart = rtbResultados.TextLength;
             rtbResultados.SelectionLength = 0;

@@ -13,3 +13,4 @@ C:\Users\jggab\Trabalho-Final-FPAA\obj\Debug\net10.0-windows\refint\Trabalho-Fin
 C:\Users\jggab\Trabalho-Final-FPAA\obj\Debug\net10.0-windows\Trabalho-Final-FPAA.pdb
 C:\Users\jggab\Trabalho-Final-FPAA\obj\Debug\net10.0-windows\Trabalho-Final-FPAA.genruntimeconfig.cache
 C:\Users\jggab\Trabalho-Final-FPAA\obj\Debug\net10.0-windows\ref\Trabalho-Final-FPAA.dll
+C:\Users\jggab\Trabalho-Final-FPAA\bin\Debug\net10.0-windows\faaah.mp3
