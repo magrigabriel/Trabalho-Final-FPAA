@@ -25,6 +25,7 @@ namespace Trabalho
             this.pnlActions = new System.Windows.Forms.Panel();
             this.btnExecutar = new System.Windows.Forms.Button();
             this.btnLimpar = new System.Windows.Forms.Button();
+            this.btnCreditos = new System.Windows.Forms.Button();
             this.pnlSepActions = new System.Windows.Forms.Panel();
             this.pnlResultados = new System.Windows.Forms.Panel();
             this.lblResultados = new System.Windows.Forms.Label();
@@ -120,6 +121,7 @@ namespace Trabalho
             this.pnlActions.Size = new System.Drawing.Size(950, 58);
             this.pnlActions.Controls.Add(this.btnLimpar);
             this.pnlActions.Controls.Add(this.btnExecutar);
+            this.pnlActions.Controls.Add(this.btnCreditos);
 
             // btnExecutar — Botão primário
             this.btnExecutar.BackColor = System.Drawing.Color.FromArgb(99, 102, 241);
@@ -148,6 +150,20 @@ namespace Trabalho
             this.btnLimpar.Name = "btnLimpar";
             this.btnLimpar.Size = new System.Drawing.Size(130, 42);
             this.btnLimpar.Text = "Limpar";
+
+            // btnCreditos — Botão terciário
+            this.btnCreditos.BackColor = System.Drawing.Color.FromArgb(30, 35, 58);
+            this.btnCreditos.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCreditos.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(70, 75, 105);
+            this.btnCreditos.FlatAppearance.BorderSize = 1;
+            this.btnCreditos.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(45, 50, 80);
+            this.btnCreditos.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(40, 45, 72);
+            this.btnCreditos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCreditos.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
+            this.btnCreditos.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
+            this.btnCreditos.Name = "btnCreditos";
+            this.btnCreditos.Size = new System.Drawing.Size(130, 42);
+            this.btnCreditos.Text = "Créditos";
 
             // ─────────────────────────────────────────────
             // pnlResultados — Painel de resultados
@@ -222,6 +238,7 @@ namespace Trabalho
         private System.Windows.Forms.Panel pnlActions;
         private System.Windows.Forms.Button btnExecutar;
         private System.Windows.Forms.Button btnLimpar;
+        private System.Windows.Forms.Button btnCreditos;
         private System.Windows.Forms.Panel pnlResultados;
         private System.Windows.Forms.Label lblResultados;
         private System.Windows.Forms.RichTextBox rtbResultados;

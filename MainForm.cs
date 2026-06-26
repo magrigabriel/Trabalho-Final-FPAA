@@ -42,6 +42,7 @@ namespace Trabalho
             this.nudCenarios.ValueChanged += NudCenarios_ValueChanged;
             this.btnExecutar.Click += BtnExecutar_Click;
             this.btnLimpar.Click += BtnLimpar_Click;
+            this.btnCreditos.Click += BtnCreditos_Click;
             this.Load += MainForm_Load;
             this.Resize += MainForm_Resize;
         }
@@ -64,15 +65,16 @@ namespace Trabalho
 
         private void CenterActionButtons()
         {
-            if (pnlActions == null || btnExecutar == null || btnLimpar == null) return;
+            if (pnlActions == null || btnExecutar == null || btnLimpar == null || btnCreditos == null) return;
 
             int gap = 20;
-            int totalWidth = btnExecutar.Width + gap + btnLimpar.Width;
+            int totalWidth = btnExecutar.Width + gap + btnLimpar.Width + gap + btnCreditos.Width;
             int startX = (pnlActions.Width - totalWidth) / 2;
             int centerY = (pnlActions.Height - btnExecutar.Height) / 2;
 
             btnExecutar.Location = new Point(startX, centerY);
             btnLimpar.Location = new Point(startX + btnExecutar.Width + gap, centerY);
+            btnCreditos.Location = new Point(btnLimpar.Right + gap, centerY);
         }
 
         private void UpdateCardWidths()
@@ -328,6 +330,17 @@ namespace Trabalho
             nudCenarios.ValueChanged += NudCenarios_ValueChanged;
             AddScenarioCard(1);
             ShowWelcomeMessage();
+        }
+
+        // ─────────────────────────────────────────────────
+        // Créditos
+        // ─────────────────────────────────────────────────
+        private void BtnCreditos_Click(object? sender, EventArgs e)
+        {
+            using (var creditsForm = new CreditsForm())
+            {
+                creditsForm.ShowDialog(this);
+            }
         }
 
         // ─────────────────────────────────────────────────
