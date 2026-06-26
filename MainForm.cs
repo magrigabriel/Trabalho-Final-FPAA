@@ -6,9 +6,6 @@ namespace Trabalho
 {
     public partial class MainForm : Form
     {
-        // ─────────────────────────────────────────────────
-        // Paleta "Midnight Indigo"
-        // ─────────────────────────────────────────────────
         private static readonly Color BG_DEEP    = Color.FromArgb(13, 15, 30);
         private static readonly Color BG_CARD    = Color.FromArgb(22, 25, 48);
         private static readonly Color BG_INPUT   = Color.FromArgb(30, 34, 60);
@@ -22,15 +19,9 @@ namespace Trabalho
 
         private readonly List<(TextBox helena, TextBox marcos)> _scenarioInputs = new();
 
-        // ─────────────────────────────────────────────────
-        // Win32 API para reproduzir MP3
-        // ─────────────────────────────────────────────────
         [DllImport("winmm.dll", CharSet = CharSet.Auto)]
         private static extern int mciSendString(string command, IntPtr buffer, int bufferSize, IntPtr callback);
 
-        // ─────────────────────────────────────────────────
-        // Construtor
-        // ─────────────────────────────────────────────────
         public MainForm()
         {
             InitializeComponent();
@@ -47,9 +38,6 @@ namespace Trabalho
             this.Resize += MainForm_Resize;
         }
 
-        // ─────────────────────────────────────────────────
-        // Layout
-        // ─────────────────────────────────────────────────
         private void MainForm_Load(object? sender, EventArgs e)
         {
             CenterActionButtons();
@@ -92,9 +80,6 @@ namespace Trabalho
             return pnlInput.ClientSize.Width - 30 - scrollbar;
         }
 
-        // ─────────────────────────────────────────────────
-        // Gerenciamento de cenários
-        // ─────────────────────────────────────────────────
         private void NudCenarios_ValueChanged(object? sender, EventArgs e)
         {
             int newCount = (int)nudCenarios.Value;
@@ -154,7 +139,6 @@ namespace Trabalho
         {
             Panel card = new Panel { BackColor = BG_CARD };
 
-            // Barra de acento à esquerda
             card.Controls.Add(new Panel
             {
                 Dock = DockStyle.Left,
@@ -162,7 +146,6 @@ namespace Trabalho
                 BackColor = PRIMARY
             });
 
-            // Título
             card.Controls.Add(new Label
             {
                 Text = $"Cen\u00E1rio {number}",
@@ -172,7 +155,6 @@ namespace Trabalho
                 AutoSize = true
             });
 
-            // Helena
             Label lblHelena = new Label
             {
                 Name = $"lblHelena{number}",
@@ -200,7 +182,6 @@ namespace Trabalho
                 lblHelena.Text = $"Helena  ({txtHelena.Text.Length}/80)";
             card.Controls.Add(txtHelena);
 
-            // Marcos
             Label lblMarcos = new Label
             {
                 Name = $"lblMarcos{number}",
@@ -232,9 +213,6 @@ namespace Trabalho
             return card;
         }
 
-        // ─────────────────────────────────────────────────
-        // Áudio
-        // ─────────────────────────────────────────────────
         private void PlayExecuteSound()
         {
             try
@@ -249,13 +227,9 @@ namespace Trabalho
             }
             catch
             {
-                // Ignora erros de áudio silenciosamente
             }
         }
 
-        // ─────────────────────────────────────────────────
-        // Executar LCS
-        // ─────────────────────────────────────────────────
         private void BtnExecutar_Click(object? sender, EventArgs e)
         {
             PlayExecuteSound();
@@ -282,13 +256,11 @@ namespace Trabalho
                 if (seqHelena.Length > 80) seqHelena = seqHelena.Substring(0, 80);
                 if (seqMarcos.Length > 80) seqMarcos = seqMarcos.Substring(0, 80);
 
-                // Cabeçalho
                 AppendText($"\u2500\u2500 Cen\u00E1rio {i + 1} ", PRIMARY, "Segoe UI Semibold", 12f);
                 AppendText(new string('\u2500', 36) + "\n", Color.FromArgb(50, 55, 85));
                 AppendText($"  Helena: \"{seqHelena}\"\n", TEXT_DIM);
                 AppendText($"  Marcos: \"{seqMarcos}\"\n\n", TEXT_DIM);
 
-                // Algoritmo
                 List<string> results = LcsAlgorithm.MatrizParaLCS(seqHelena, seqMarcos);
 
                 if (results.Count == 0 || (results.Count == 1 && results[0] == ""))
@@ -314,9 +286,6 @@ namespace Trabalho
             rtbResultados.ScrollToCaret();
         }
 
-        // ─────────────────────────────────────────────────
-        // Limpar
-        // ─────────────────────────────────────────────────
         private void BtnLimpar_Click(object? sender, EventArgs e)
         {
             nudCenarios.ValueChanged -= NudCenarios_ValueChanged;
@@ -332,9 +301,6 @@ namespace Trabalho
             ShowWelcomeMessage();
         }
 
-        // ─────────────────────────────────────────────────
-        // Créditos
-        // ─────────────────────────────────────────────────
         private void BtnCreditos_Click(object? sender, EventArgs e)
         {
             using (var creditsForm = new CreditsForm())
@@ -343,9 +309,6 @@ namespace Trabalho
             }
         }
 
-        // ─────────────────────────────────────────────────
-        // Boas-vindas
-        // ─────────────────────────────────────────────────
         private void ShowWelcomeMessage()
         {
             rtbResultados.Clear();
@@ -356,9 +319,6 @@ namespace Trabalho
             AppendText("  Letras min\u00FAsculas \u00B7 1 a 80 caracteres por sequ\u00EAncia\n", TEXT_DIM);
         }
 
-        // ─────────────────────────────────────────────────
-        // Helper — texto colorido
-        // ─────────────────────────────────────────────────
         private void AppendText(string text, Color color, string? fontFamily = null, float? fontSize = null)
         {
             rtbResultados.SelectionStart = rtbResultados.TextLength;

@@ -25,7 +25,6 @@ namespace Trabalho
             this.scrollTimer = new System.Windows.Forms.Timer();
             this.SuspendLayout();
 
-            // Form configuration
             this.BackColor = Color.FromArgb(13, 15, 30);
             this.ClientSize = new Size(600, 400);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -37,7 +36,6 @@ namespace Trabalho
             this.FormClosing += CreditsForm_FormClosing;
             this.Load += CreditsForm_Load;
 
-            // Label configuration
             this.lblCredits.AutoSize = true;
             this.lblCredits.Font = new Font("Segoe UI", 16F, FontStyle.Regular);
             this.lblCredits.ForeColor = Color.FromArgb(241, 245, 249);
@@ -58,7 +56,6 @@ namespace Trabalho
                 
             this.lblCredits.Text = creditsText;
 
-            // Timer configuration
             this.scrollTimer.Interval = 30; // ~33fps
             this.scrollTimer.Tick += ScrollTimer_Tick;
 
@@ -69,10 +66,8 @@ namespace Trabalho
 
         private void CreditsForm_Load(object? sender, EventArgs e)
         {
-            // Center the label horizontally, start below the visible area
             this.lblCredits.Location = new Point((this.ClientSize.Width - this.lblCredits.Width) / 2, this.ClientSize.Height);
             
-            // Play music
             try
             {
                 string audioPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "creditos.mp3");
@@ -90,13 +85,10 @@ namespace Trabalho
 
         private void ScrollTimer_Tick(object? sender, EventArgs e)
         {
-            // Move label up
             this.lblCredits.Top -= 2;
 
-            // Reset or stop when it scrolls completely out of view
             if (this.lblCredits.Bottom < 0)
             {
-                // Start from the bottom again
                 this.lblCredits.Top = this.ClientSize.Height;
             }
         }
@@ -105,7 +97,6 @@ namespace Trabalho
         {
             this.scrollTimer.Stop();
             
-            // Stop music
             try
             {
                 mciSendString("stop creditsMusic", IntPtr.Zero, 0, IntPtr.Zero);

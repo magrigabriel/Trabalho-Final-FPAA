@@ -37,9 +37,6 @@ namespace Trabalho
             ((System.ComponentModel.ISupportInitialize)(this.nudCenarios)).BeginInit();
             this.SuspendLayout();
 
-            // ─────────────────────────────────────────────
-            // pnlHeader — Header compacto
-            // ─────────────────────────────────────────────
             this.pnlHeader.BackColor = System.Drawing.Color.FromArgb(17, 19, 38);
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Name = "pnlHeader";
@@ -49,7 +46,6 @@ namespace Trabalho
             this.pnlHeader.Controls.Add(this.lblSubtitle);
             this.pnlHeader.Controls.Add(this.lblTitle);
 
-            // lblTitle
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
             this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(99, 102, 241);
@@ -58,7 +54,6 @@ namespace Trabalho
             this.lblTitle.Text = "LCS";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
-            // lblSubtitle
             this.lblSubtitle.AutoSize = true;
             this.lblSubtitle.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular);
             this.lblSubtitle.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
@@ -66,7 +61,6 @@ namespace Trabalho
             this.lblSubtitle.Name = "lblSubtitle";
             this.lblSubtitle.Text = "Longest Common Subsequence  \u00B7  Trabalho Final FPAA";
 
-            // lblCenariosLabel
             this.lblCenariosLabel.AutoSize = true;
             this.lblCenariosLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 10.5F, System.Drawing.FontStyle.Bold);
             this.lblCenariosLabel.ForeColor = System.Drawing.Color.FromArgb(210, 215, 225);
@@ -75,7 +69,6 @@ namespace Trabalho
             this.lblCenariosLabel.Text = "Cen\u00E1rios:";
             this.lblCenariosLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
 
-            // nudCenarios
             this.nudCenarios.BackColor = System.Drawing.Color.FromArgb(30, 34, 60);
             this.nudCenarios.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
             this.nudCenarios.ForeColor = System.Drawing.Color.FromArgb(129, 140, 248);
@@ -88,33 +81,21 @@ namespace Trabalho
             this.nudCenarios.Value = new decimal(new int[] { 1, 0, 0, 0 });
             this.nudCenarios.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
 
-            // ─────────────────────────────────────────────
-            // pnlSeparator — Linha de acento
-            // ─────────────────────────────────────────────
             this.pnlSeparator.BackColor = System.Drawing.Color.FromArgb(99, 102, 241);
             this.pnlSeparator.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlSeparator.Name = "pnlSeparator";
             this.pnlSeparator.Size = new System.Drawing.Size(950, 2);
 
-            // ─────────────────────────────────────────────
-            // pnlInput — Área scrollável para cards
-            // ─────────────────────────────────────────────
             this.pnlInput.AutoScroll = true;
             this.pnlInput.BackColor = System.Drawing.Color.FromArgb(13, 15, 30);
             this.pnlInput.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlInput.Name = "pnlInput";
 
-            // ─────────────────────────────────────────────
-            // pnlSepActions — Linha de acento
-            // ─────────────────────────────────────────────
             this.pnlSepActions.BackColor = System.Drawing.Color.FromArgb(40, 44, 75);
             this.pnlSepActions.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlSepActions.Name = "pnlSepActions";
             this.pnlSepActions.Size = new System.Drawing.Size(950, 1);
 
-            // ─────────────────────────────────────────────
-            // pnlActions — Botões de ação
-            // ─────────────────────────────────────────────
             this.pnlActions.BackColor = System.Drawing.Color.FromArgb(17, 19, 38);
             this.pnlActions.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlActions.Name = "pnlActions";
@@ -123,7 +104,6 @@ namespace Trabalho
             this.pnlActions.Controls.Add(this.btnExecutar);
             this.pnlActions.Controls.Add(this.btnCreditos);
 
-            // btnExecutar — Botão primário
             this.btnExecutar.BackColor = System.Drawing.Color.FromArgb(99, 102, 241);
             this.btnExecutar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExecutar.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(129, 140, 248);
@@ -137,7 +117,6 @@ namespace Trabalho
             this.btnExecutar.Size = new System.Drawing.Size(220, 42);
             this.btnExecutar.Text = "Executar LCS";
 
-            // btnLimpar — Botão secundário
             this.btnLimpar.BackColor = System.Drawing.Color.FromArgb(30, 35, 58);
             this.btnLimpar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnLimpar.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(70, 75, 105);
@@ -151,7 +130,6 @@ namespace Trabalho
             this.btnLimpar.Size = new System.Drawing.Size(130, 42);
             this.btnLimpar.Text = "Limpar";
 
-            // btnCreditos — Botão terciário
             this.btnCreditos.BackColor = System.Drawing.Color.FromArgb(30, 35, 58);
             this.btnCreditos.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCreditos.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(70, 75, 105);
@@ -165,9 +143,6 @@ namespace Trabalho
             this.btnCreditos.Size = new System.Drawing.Size(130, 42);
             this.btnCreditos.Text = "Créditos";
 
-            // ─────────────────────────────────────────────
-            // pnlResultados — Painel de resultados
-            // ─────────────────────────────────────────────
             this.pnlResultados.BackColor = System.Drawing.Color.FromArgb(13, 15, 30);
             this.pnlResultados.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlResultados.Name = "pnlResultados";
@@ -175,7 +150,6 @@ namespace Trabalho
             this.pnlResultados.Controls.Add(this.rtbResultados);
             this.pnlResultados.Controls.Add(this.lblResultados);
 
-            // lblResultados
             this.lblResultados.BackColor = System.Drawing.Color.FromArgb(22, 25, 48);
             this.lblResultados.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblResultados.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold);
@@ -186,7 +160,6 @@ namespace Trabalho
             this.lblResultados.Text = "Resultados";
             this.lblResultados.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 
-            // rtbResultados
             this.rtbResultados.BackColor = System.Drawing.Color.FromArgb(13, 15, 30);
             this.rtbResultados.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.rtbResultados.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -196,9 +169,6 @@ namespace Trabalho
             this.rtbResultados.ReadOnly = true;
             this.rtbResultados.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 
-            // ─────────────────────────────────────────────
-            // MainForm
-            // ─────────────────────────────────────────────
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(13, 15, 30);
@@ -211,7 +181,6 @@ namespace Trabalho
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LCS \u2014 Trabalho Final FPAA";
 
-            // Ordem de Controls.Add define layout do Dock
             this.Controls.Add(this.pnlInput);         // Dock.Fill
             this.Controls.Add(this.pnlSepActions);    // Dock.Bottom
             this.Controls.Add(this.pnlActions);       // Dock.Bottom
