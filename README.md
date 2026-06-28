@@ -161,6 +161,30 @@ Além disso, o projeto evidenciou a importância da organização no fluxo de tr
 
 ---
 
+## 🧪 Casos de Teste
+
+A bateria de testes a seguir valida tanto a **interface** (estado inicial, contadores, botões) quanto o **algoritmo** (correção da LCS, múltiplas soluções, casos-limite e robustez).
+
+| ID      | Cenário                            | Objetivo                                                                 | Entradas                                                                 | Resultado / Critério de aprovação                                                                                  |
+| ------- | ---------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| CT-001  | Inicialização da aplicação         | Verificar o estado inicial da tela ao abrir a aplicação.                 | Abrir a aplicação e observar a tela inicial.                             | Campos de quantidade, Helena e Marcos visíveis; botões **Executar LCS** e **Limpar** habilitados; resultados vazios; contador em **0/80**. |
+| CT-002  | Alteração da quantidade de cenários| Verificar se a interface cria/remove campos conforme a quantidade.       | Alterar cenários: 1 → 5 → 2.                                             | Campos atualizados corretamente, sem campos "fantasmas", interface organizada.                                     |
+| CT-003  | Botão Limpar                       | Confirmar que o botão limpa completamente a interface.                   | Preencher cenários, executar e clicar em **Limpar**.                     | Todos os campos vazios, área de resultados limpa, contadores em **0/80**.                                          |
+| CT-004  | Contador de caracteres             | Verificar se o contador acompanha a digitação.                          | Digitar 10 caracteres e continuar até 80.                                | Contador exibe a quantidade correta; ao atingir o máximo mostra **80/80**.                                         |
+| CT-005  | Campo vazio                        | Verificar se um campo vazio retorna mensagem de erro.                    | Helena: `abc` / Marcos: *(vazio)*                                         | Aprovado **somente** se a aplicação retornar erro pedindo o preenchimento das sequências.                          |
+| CT-006  | Letras maiúsculas                  | Verificar o tratamento de letras maiúsculas.                            | Helena: `ABCDEF` / Marcos: `abcdef`                                      | Aprovado **somente** se retornar erro indicando uso apenas de minúsculas **ou** converter maiúsculas em minúsculas.|
+| CT-007  | Caso oficial do enunciado ⭐        | Reproduzir exatamente a saída do enunciado. **(Obrigatório)**            | Helena: `ijkijkii` / Marcos: `ijkijkii` (1 cenário)                      | Aprovado **somente** se as **7 sequências** aparecerem exatamente iguais ao PDF (LCS de tamanho 5).                |
+| CT-008  | Sequências iguais                  | Verificar se, com entradas iguais, retorna a própria sequência.         | Helena: `abcdef` / Marcos: `abcdef`                                      | Aprovado **somente** se retornar a mesma sequência das entradas (`abcdef`).                                        |
+| CT-009  | Apenas uma letra igual             | Verificar se, com só uma letra em comum, essa letra é retornada.        | Helena: `abc` / Marcos: `dbe`                                            | Aprovado **somente** se retornar a letra em comum (`b`).                                                           |
+| CT-010  | Nenhuma letra em comum             | Verificar robustez quando não há subsequência válida.                   | Helena: `abc` / Marcos: `xyz`                                            | Aprovado **somente** se a aplicação tratar o caso sem travamentos (ex.: "Nenhuma subsequência comum encontrada"). |
+| CT-011  | Múltiplas LCS                      | Retornar **todas** as maiores LCS, em ordem alfabética e sem repetição. | Helena: `abcbdab` / Marcos: `bdcaba`                                     | Aprovado **somente** se retornar todas as LCS esperadas (`bcab`, `bcba`, `bdab`).                                  |
+| CT-012  | Limite de tamanho (80 caracteres)  | Verificar a matriz de PD no tamanho máximo permitido.                    | Helena e Marcos: duas strings idênticas de **80 caracteres** (alfabeto repetido). | Aprovado **somente** se retornar todas as maiores LCS, conforme esperado.                                          |
+| CT-013  | Muitas letras repetidas            | Verificar se o backtracking percorre todos os caminhos.                  | Helena e Marcos: duas strings de **80 caracteres** no padrão `abab.../baba...`. | Aprovado **somente** se retornar todas as maiores LCS, sem travamentos e sem demora.                              |
+
+> ⭐ **CT-007** é o caso obrigatório do enunciado e deve ser executado sempre antes de qualquer entrega.
+
+---
+
 ## 📁 Estrutura do Projeto
 
 ```
