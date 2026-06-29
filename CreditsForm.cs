@@ -1,3 +1,23 @@
+// =============================================================================
+// Trabalho Final - Fundamentos de Projeto e Análise de Algoritmos (FPAA)
+// Pontifícia Universidade Católica de Minas Gerais - Campus Contagem
+// -----------------------------------------------------------------------------
+// Título    : LCS — Longest Common Subsequence (Subsequência Comum Mais Longa)
+// Versão    : 1.0
+// Data      : Junho/2026
+// -----------------------------------------------------------------------------
+// Autores:
+//   - Gabriel Henrique Machado Magri
+//   - Caio Martins Bicalho da Costa
+//   - Gabriel Amorim Gonçalves Silva
+//   - Geovanna do Nascimento Miranda
+//   - João Gabriel Soares da Silva Franco
+//   - Luiz Henrique Oliveira Coelho
+// -----------------------------------------------------------------------------
+// Descrição : Janela de créditos com rolagem animada dos nomes dos autores
+//             e reprodução de áudio de fundo.
+// =============================================================================
+
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -6,8 +26,12 @@ using System.IO;
 
 namespace Trabalho
 {
+    /// <summary>
+    /// Formulário modal que exibe os créditos do projeto com animação de scroll.
+    /// </summary>
     public class CreditsForm : Form
     {
+        // Importação da API winmm para reprodução do áudio de créditos.
         [DllImport("winmm.dll", CharSet = CharSet.Auto)]
         private static extern int mciSendString(string command, IntPtr buffer, int bufferSize, IntPtr callback);
 
@@ -19,6 +43,9 @@ namespace Trabalho
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Cria os controles visuais e monta o texto com os nomes dos integrantes.
+        /// </summary>
         private void InitializeComponent()
         {
             this.lblCredits = new Label();
@@ -43,6 +70,7 @@ namespace Trabalho
             this.lblCredits.TabIndex = 0;
             this.lblCredits.TextAlign = ContentAlignment.MiddleCenter;
             
+            // Texto exibido durante a animação de rolagem.
             string creditsText = 
                 "TRABALHO FINAL FPAA\n\n" +
                 "Desenvolvido por:\n\n" +
@@ -56,7 +84,8 @@ namespace Trabalho
                 
             this.lblCredits.Text = creditsText;
 
-            this.scrollTimer.Interval = 30; // ~33fps
+            // Timer controla a velocidade da animação (~33 fps).
+            this.scrollTimer.Interval = 30;
             this.scrollTimer.Tick += ScrollTimer_Tick;
 
             this.Controls.Add(this.lblCredits);
@@ -64,6 +93,9 @@ namespace Trabalho
             this.PerformLayout();
         }
 
+        /// <summary>
+        /// Posiciona o label abaixo da tela, inicia o áudio e a animação.
+        /// </summary>
         private void CreditsForm_Load(object? sender, EventArgs e)
         {
             this.lblCredits.Location = new Point((this.ClientSize.Width - this.lblCredits.Width) / 2, this.ClientSize.Height);
@@ -83,6 +115,9 @@ namespace Trabalho
             this.scrollTimer.Start();
         }
 
+        /// <summary>
+        /// Move o label para cima a cada tick; reinicia quando sai da tela.
+        /// </summary>
         private void ScrollTimer_Tick(object? sender, EventArgs e)
         {
             this.lblCredits.Top -= 2;
@@ -93,6 +128,9 @@ namespace Trabalho
             }
         }
 
+        /// <summary>
+        /// Para a animação e encerra a reprodução do áudio ao fechar a janela.
+        /// </summary>
         private void CreditsForm_FormClosing(object? sender, FormClosingEventArgs e)
         {
             this.scrollTimer.Stop();

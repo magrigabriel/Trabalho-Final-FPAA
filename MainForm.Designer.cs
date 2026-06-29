@@ -1,5 +1,28 @@
+// =============================================================================
+// Trabalho Final - Fundamentos de Projeto e Análise de Algoritmos (FPAA)
+// Pontifícia Universidade Católica de Minas Gerais - Campus Contagem
+// -----------------------------------------------------------------------------
+// Título    : LCS — Longest Common Subsequence (Subsequência Comum Mais Longa)
+// Versão    : 1.0
+// Data      : Junho/2026
+// -----------------------------------------------------------------------------
+// Autores:
+//   - Gabriel Henrique Machado Magri
+//   - Caio Martins Bicalho da Costa
+//   - Gabriel Amorim Gonçalves Silva
+//   - Geovanna do Nascimento Miranda
+//   - João Gabriel Soares da Silva Franco
+//   - Luiz Henrique Oliveira Coelho
+// -----------------------------------------------------------------------------
+// Descrição : Definição visual dos componentes da janela principal (layout,
+//             cores, tamanhos e posicionamento dos controles WinForms).
+// =============================================================================
+
 namespace Trabalho
 {
+    /// <summary>
+    /// Parte parcial do MainForm responsável pela inicialização dos controles visuais.
+    /// </summary>
     partial class MainForm
     {
         private System.ComponentModel.IContainer components = null;
@@ -13,14 +36,22 @@ namespace Trabalho
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Configura e instancia todos os painéis, labels, botões e campos da interface.
+        /// </summary>
         private void InitializeComponent()
         {
+            // --- Controles do cabeçalho (título e seletor de cenários) ---
             this.pnlHeader = new System.Windows.Forms.Panel();
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblSubtitle = new System.Windows.Forms.Label();
             this.lblCenariosLabel = new System.Windows.Forms.Label();
             this.nudCenarios = new System.Windows.Forms.NumericUpDown();
             this.pnlSeparator = new System.Windows.Forms.Panel();
+            this.pnlModoExecucao = new System.Windows.Forms.Panel();
+            this.lblModoExecucao = new System.Windows.Forms.Label();
+            this.rbSomentePd = new System.Windows.Forms.RadioButton();
+            this.rbPdBacktracking = new System.Windows.Forms.RadioButton();
             this.pnlInput = new System.Windows.Forms.Panel();
             this.pnlActions = new System.Windows.Forms.Panel();
             this.btnExecutar = new System.Windows.Forms.Button();
@@ -69,6 +100,7 @@ namespace Trabalho
             this.lblCenariosLabel.Text = "Cen\u00E1rios:";
             this.lblCenariosLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
 
+            // Seletor numérico: permite de 1 a 10 cenários (conforme roteiro).
             this.nudCenarios.BackColor = System.Drawing.Color.FromArgb(30, 34, 60);
             this.nudCenarios.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
             this.nudCenarios.ForeColor = System.Drawing.Color.FromArgb(129, 140, 248);
@@ -85,6 +117,43 @@ namespace Trabalho
             this.pnlSeparator.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlSeparator.Name = "pnlSeparator";
             this.pnlSeparator.Size = new System.Drawing.Size(950, 2);
+
+            // Seletor de modo: Arquivo 1 (somente PD) ou Arquivo 2 (PD + Backtracking).
+            this.pnlModoExecucao.BackColor = System.Drawing.Color.FromArgb(17, 19, 38);
+            this.pnlModoExecucao.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlModoExecucao.Name = "pnlModoExecucao";
+            this.pnlModoExecucao.Size = new System.Drawing.Size(950, 44);
+            this.pnlModoExecucao.Controls.Add(this.rbPdBacktracking);
+            this.pnlModoExecucao.Controls.Add(this.rbSomentePd);
+            this.pnlModoExecucao.Controls.Add(this.lblModoExecucao);
+
+            this.lblModoExecucao.AutoSize = true;
+            this.lblModoExecucao.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
+            this.lblModoExecucao.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
+            this.lblModoExecucao.Location = new System.Drawing.Point(15, 12);
+            this.lblModoExecucao.Name = "lblModoExecucao";
+            this.lblModoExecucao.Text = "Modo de execu\u00E7\u00E3o:";
+
+            this.rbSomentePd.AutoSize = true;
+            this.rbSomentePd.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.rbSomentePd.ForeColor = System.Drawing.Color.FromArgb(210, 215, 225);
+            this.rbSomentePd.Location = new System.Drawing.Point(155, 10);
+            this.rbSomentePd.Name = "rbSomentePd";
+            this.rbSomentePd.Size = new System.Drawing.Size(320, 23);
+            this.rbSomentePd.TabStop = true;
+            this.rbSomentePd.Text = "Somente PD  (LcsProgramacaoDinamica.cs)";
+            this.rbSomentePd.UseVisualStyleBackColor = true;
+
+            this.rbPdBacktracking.AutoSize = true;
+            this.rbPdBacktracking.Checked = true;
+            this.rbPdBacktracking.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.rbPdBacktracking.ForeColor = System.Drawing.Color.FromArgb(129, 140, 248);
+            this.rbPdBacktracking.Location = new System.Drawing.Point(490, 10);
+            this.rbPdBacktracking.Name = "rbPdBacktracking";
+            this.rbPdBacktracking.Size = new System.Drawing.Size(420, 23);
+            this.rbPdBacktracking.TabStop = true;
+            this.rbPdBacktracking.Text = "PD + Backtracking  (LcsProgramacaoDinamicaBacktracking.cs)";
+            this.rbPdBacktracking.UseVisualStyleBackColor = true;
 
             this.pnlInput.AutoScroll = true;
             this.pnlInput.BackColor = System.Drawing.Color.FromArgb(13, 15, 30);
@@ -181,10 +250,12 @@ namespace Trabalho
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LCS \u2014 Trabalho Final FPAA";
 
+            // --- Montagem final: ordem dos Dock determina o layout da janela ---
             this.Controls.Add(this.pnlInput);         // Dock.Fill
             this.Controls.Add(this.pnlSepActions);    // Dock.Bottom
             this.Controls.Add(this.pnlActions);       // Dock.Bottom
             this.Controls.Add(this.pnlResultados);    // Dock.Bottom
+            this.Controls.Add(this.pnlModoExecucao);  // Dock.Top
             this.Controls.Add(this.pnlSeparator);     // Dock.Top
             this.Controls.Add(this.pnlHeader);        // Dock.Top
 
@@ -202,6 +273,10 @@ namespace Trabalho
         private System.Windows.Forms.Label lblCenariosLabel;
         private System.Windows.Forms.NumericUpDown nudCenarios;
         private System.Windows.Forms.Panel pnlSeparator;
+        private System.Windows.Forms.Panel pnlModoExecucao;
+        private System.Windows.Forms.Label lblModoExecucao;
+        private System.Windows.Forms.RadioButton rbSomentePd;
+        private System.Windows.Forms.RadioButton rbPdBacktracking;
         private System.Windows.Forms.Panel pnlInput;
         private System.Windows.Forms.Panel pnlSepActions;
         private System.Windows.Forms.Panel pnlActions;

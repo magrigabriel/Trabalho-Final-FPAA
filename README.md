@@ -26,9 +26,24 @@ O programa recebe de **1 a 10 cenários** de entrada. Em cada cenário, o usuár
 ```
 Main()
  ├── RecebeDados()       → lê e valida as sequências de entrada
- └── MatrizParaLCS()     → constrói a matriz de PD
-      └── FazerBacktracking() → recupera todas as LCS distintas
+ ├── LcsProgramacaoDinamica.cs           → somente PD (tamanho da LCS)
+ └── LcsProgramacaoDinamicaBacktracking.cs → PD + backtracking (todas as LCS)
 ```
+
+---
+
+## 📦 Arquivos de entrega (.zip)
+
+Conforme o roteiro, o `.zip` deve conter **dois arquivos de solução distintos**:
+
+| Item | Arquivo | O que faz |
+| ---- | ------- | --------- |
+| **1** | `LcsProgramacaoDinamica.cs` | Somente Programação Dinâmica — constrói a matriz e retorna o **tamanho** da LCS |
+| **2** | `LcsProgramacaoDinamicaBacktracking.cs` | PD + Backtracking — reutiliza a matriz do Arquivo 1 e recupera **todas** as LCS |
+| **3** | `README.md` | Descrição da solução e respostas às perguntas do roteiro |
+| **4** | Apresentação (`.pdf` ou `.pptx`) | Slides da apresentação |
+
+> Na interface gráfica, use os botões de rádio **"Somente PD"** ou **"PD + Backtracking"** para executar cada arquivo separadamente e demonstrar na apresentação.
 
 ---
 
@@ -56,7 +71,7 @@ Digite a sequência 1 da Helena: abcbdab
 Digite a sequência 1 do Marcos: bdcaba
 ```
 
-> Entradas com mais de 80 caracteres são automaticamente truncadas. Letras maiúsculas são convertidas para minúsculas.
+> Entradas inválidas (vazio, mais de 80 letras ou caracteres fora de `a`-`z`) exibem mensagem de erro. Letras maiúsculas são convertidas para minúsculas.
 
 ## 📤 Formato de saída
 
@@ -76,7 +91,7 @@ bdab
 
 ### 1. Programação Dinâmica
 
-O método `MatrizParaLCS()` constrói uma matriz `LCS[M+1, N+1]`, onde `M` e `N` são os comprimentos das duas sequências. A linha 0 e a coluna 0 são mantidas como zero (caso base: comparação com sequência vazia).
+O método `ConstruirMatrizLcs()` (em `LcsProgramacaoDinamica.cs`) constrói uma matriz `LCS[M+1, N+1]`, onde `M` e `N` são os comprimentos das duas sequências. A linha 0 e a coluna 0 são mantidas como zero (caso base: comparação com sequência vazia).
 
 **Regra de preenchimento:**
 
@@ -93,7 +108,7 @@ Isso garante complexidade **O(M × N)** em tempo e espaço, contra uma abordagem
 
 ### 2. Backtracking
 
-A Programação Dinâmica revela o _comprimento_ da LCS; o `FazerBacktracking()` percorre a matriz de `LCS[M, N]` até a borda de zeros para recuperar as _sequências_ em si.
+A Programação Dinâmica revela o _comprimento_ da LCS; o `FazerBacktracking()` (em `LcsProgramacaoDinamicaBacktracking.cs`) percorre a matriz de `LCS[M, N]` até a borda de zeros para recuperar as _sequências_ em si.
 
 **Três casos na recursão:**
 
@@ -119,16 +134,17 @@ Caminhos diferentes na matriz podem levar à mesma subsequência. Resolvido com 
 Após o backtracking, os resultados são transferidos para uma `List<string>` e ordenados com `.Sort()`.
 
 **Limites de entrada**
-Cada sequência é normalizada com `.ToLower()` e truncada com `.Substring(0, 80)` se ultrapassar o limite permitido.
+Validação centralizada em `ValidacaoEntrada.cs`: cenários de 1 a 10; sequências de 1 a 80 letras; apenas caracteres `a`-`z` (maiúsculas convertidas para minúsculas); rejeição de campos vazios e caracteres inválidos com mensagem de erro.
 
 ---
 
 ### 4. Complexidade
 
 Analisaremos a complexidade de Tempo dos algoritmos, não fazendo análise de complexidade de Memória.
-O arquivo de referência para toda a análise é o **LcsAlgorithm.cs.**
+
 **a- Versão utilizando apenas Programação Dinâmica (PD)**
-**Onde verificar no código:** No arquivo LcsAlgorithm.cs, dentro do método MatrizParaLCS. A lógica está no trecho desde as linhas int M = textoHelena.Length; e int N = textoMarcos.Length;, a criação da matriz int[,] LCS, até o final dos dois laços de repetição for aninhados. Entre as linhas 8 e 29 do arquivo.
+
+**Onde verificar no código:** Arquivo `LcsProgramacaoDinamica.cs`, método `ConstruirMatrizLcs`.
 **Cálculo da complexidade de Tempo:**
 **1- Atribuições iniciais:** Medir o tamanho das strings e instanciar variáveis leva tempo constante, ou seja, O(1).
 **2- Estrutura de Repetição:** O algoritmo utiliza dois laços for. O laço mais externo percorre a string textoHelena, executando M vezes. O laço mais interno percorre a string textoMarcos, executando N vezes para cada iteração do laço externo. Multiplicando as execuções, temos um total de M x N iterações.
@@ -138,7 +154,8 @@ O arquivo de referência para toda a análise é o **LcsAlgorithm.cs.**
 O(M x N)
 
 **b- Versão que combina Programação Dinâmica com Backtracking**
-**Onde verificar no código:** No arquivo LcsAlgorithm.cs, abrangendo a lógica das linhas 8 a 65. O código inicia com a construção da matriz pela Programação Dinâmica (linhas 8 a 29) e, em seguida, aplica a técnica de Backtracking e ordenação a partir da linha 31. Isso envolve a chamada do método recursivo FazerBacktracking(...) e toda a lógica de extração das strings contida nele, finalizando com o processo de conversão e ordenação: listaOrdenada.Sort().
+
+**Onde verificar no código:** Arquivos `LcsProgramacaoDinamica.cs` (matriz) e `LcsProgramacaoDinamicaBacktracking.cs` (backtracking e ordenação).
 **Cálculo passo a passo (Tempo):**
 **1- Fase 1 (PD):** A construção da matriz inicial é obrigatória e, conforme calculado anteriormente, consome O(M x N).
 **2- Fase 2 (Backtracking):** O método FazerBacktracking percorre a matriz recursivamente começando da posição [M, N] até [0, 0]. No pior caso, se a matriz tiver muitos caminhos válidos sobrepostos, a árvore de recursão se divide. Vamos chamar de K o número total de subsequências geradas e de L o tamanho máximo dessas subsequências (onde L <= min(M, N)). O custo para explorar a árvore e concatenar as strings válidas nos base cases é proporcional a O(K x L).
@@ -173,7 +190,7 @@ A bateria de testes a seguir valida tanto a **interface** (estado inicial, conta
 | CT-004  | Contador de caracteres             | Verificar se o contador acompanha a digitação.                          | Digitar 10 caracteres e continuar até 80.                                | Contador exibe a quantidade correta; ao atingir o máximo mostra **80/80**.                                         |
 | CT-005  | Campo vazio                        | Verificar se um campo vazio retorna mensagem de erro.                    | Helena: `abc` / Marcos: *(vazio)*                                         | Aprovado **somente** se a aplicação retornar erro pedindo o preenchimento das sequências.                          |
 | CT-006  | Letras maiúsculas                  | Verificar o tratamento de letras maiúsculas.                            | Helena: `ABCDEF` / Marcos: `abcdef`                                      | Aprovado **somente** se retornar erro indicando uso apenas de minúsculas **ou** converter maiúsculas em minúsculas.|
-| CT-007  | Caso oficial do enunciado ⭐        | Reproduzir exatamente a saída do enunciado. **(Obrigatório)**            | Helena: `ijkijkii` / Marcos: `ijkijkii` (1 cenário)                      | Aprovado **somente** se as **7 sequências** aparecerem exatamente iguais ao PDF (LCS de tamanho 5).                |
+| CT-007  | Caso oficial do enunciado ⭐        | Reproduzir exatamente a saída do enunciado. **(Obrigatório)**            | Helena: `ijkijkii` / Marcos: `ikjikji` (1 cenário)                       | Aprovado **somente** se as **7 sequências** aparecerem exatamente iguais ao PDF (LCS de tamanho 5).                |
 | CT-008  | Sequências iguais                  | Verificar se, com entradas iguais, retorna a própria sequência.         | Helena: `abcdef` / Marcos: `abcdef`                                      | Aprovado **somente** se retornar a mesma sequência das entradas (`abcdef`).                                        |
 | CT-009  | Apenas uma letra igual             | Verificar se, com só uma letra em comum, essa letra é retornada.        | Helena: `abc` / Marcos: `dbe`                                            | Aprovado **somente** se retornar a letra em comum (`b`).                                                           |
 | CT-010  | Nenhuma letra em comum             | Verificar robustez quando não há subsequência válida.                   | Helena: `abc` / Marcos: `xyz`                                            | Aprovado **somente** se a aplicação tratar o caso sem travamentos (ex.: "Nenhuma subsequência comum encontrada"). |
@@ -185,16 +202,35 @@ A bateria de testes a seguir valida tanto a **interface** (estado inicial, conta
 
 ---
 
+## ✅ Checklist de requisitos (código)
+
+| Requisito do roteiro | Status | Onde verificar |
+| -------------------- | ------ | -------------- |
+| Arquivo 1 — somente Programação Dinâmica | Atendido | `LcsProgramacaoDinamica.cs` |
+| Arquivo 2 — PD + Backtracking | Atendido | `LcsProgramacaoDinamicaBacktracking.cs` |
+| Cabeçalho com autores, versão e data | Atendido | Cabeçalho em todos os `.cs` |
+| Comentários explicando cada parte | Atendido | `<summary>` e comentários inline |
+| Validação das entradas (D ≤ 10, 1–80 letras, a–z) | Atendido | `ValidacaoEntrada.cs` + `MainForm.cs` |
+| Legibilidade do código | Atendido | Nomes claros, métodos separados |
+| Interface gráfica (bônus +3 pts) | Atendido | `MainForm.cs` / `MainForm.Designer.cs` |
+| Saída: todas as LCS máximas, sem repetição, ordem alfabética | Atendido | `LcsProgramacaoDinamicaBacktracking.cs` |
+| Linha em branco entre subsequências e entre cenários | Atendido | `FormatarSaidaCenario` + `MainForm.cs` |
+| README com as 5 perguntas do roteiro | Atendido | Seções 1–5 deste arquivo |
+
+---
+
 ## 📁 Estrutura do Projeto
 
 ```
 /
-├── Program.cs            # Código-fonte principal
-├── LcsAlgorithm.cs       # Algoritmos
-├── CreditsForm.cs
-├── MainForm.cs
-├── MainForm.Designer.cs
-└── README.md             # Este arquivo
+├── Program.cs                              # Ponto de entrada da aplicação
+├── LcsProgramacaoDinamica.cs               # ARQUIVO 1 — Somente PD (entrega)
+├── LcsProgramacaoDinamicaBacktracking.cs   # ARQUIVO 2 — PD + Backtracking (entrega)
+├── ValidacaoEntrada.cs                     # Validação de entradas (roteiro)
+├── MainForm.cs                             # Lógica da interface gráfica
+├── MainForm.Designer.cs                    # Layout visual da interface
+├── CreditsForm.cs                          # Tela de créditos
+└── README.md                               # Este arquivo (+ respostas do roteiro)
 ```
 
 ---

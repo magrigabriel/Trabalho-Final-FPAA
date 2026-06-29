@@ -1,11 +1,37 @@
+// =============================================================================
+// Trabalho Final - Fundamentos de Projeto e Análise de Algoritmos (FPAA)
+// Pontifícia Universidade Católica de Minas Gerais - Campus Contagem
+// -----------------------------------------------------------------------------
+// Título    : LCS — Longest Common Subsequence (Subsequência Comum Mais Longa)
+// Versão    : 1.0
+// Data      : Junho/2026
+// -----------------------------------------------------------------------------
+// Autores:
+//   - Gabriel Henrique Machado Magri
+//   - Caio Martins Bicalho da Costa
+//   - Gabriel Amorim Gonçalves Silva
+//   - Geovanna do Nascimento Miranda
+//   - João Gabriel Soares da Silva Franco
+//   - Luiz Henrique Oliveira Coelho
+// -----------------------------------------------------------------------------
+// Descrição : Lógica da interface gráfica principal. Gerencia cenários de
+//             entrada, validação dos dados, execução do algoritmo LCS e
+//             exibição dos resultados formatados.
+// =============================================================================
+
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Trabalho
 {
+    /// <summary>
+    /// Formulário principal da aplicação. Permite informar de 1 a 10 cenários,
+    /// cada um com as sequências de Helena e Marcos, e exibe as LCS encontradas.
+    /// </summary>
     public partial class MainForm : Form
     {
+        // Paleta de cores utilizada nos componentes visuais da interface.
         private static readonly Color BG_DEEP    = Color.FromArgb(13, 15, 30);
         private static readonly Color BG_CARD    = Color.FromArgb(22, 25, 48);
         private static readonly Color BG_INPUT   = Color.FromArgb(30, 34, 60);
@@ -17,8 +43,10 @@ namespace Trabalho
         private static readonly Color ERROR_RED  = Color.FromArgb(239, 68, 68);
         private static readonly Color SUCCESS    = Color.FromArgb(16, 185, 129);
 
+        // Lista que mantém os pares de TextBox (Helena/Marcos) de cada cenário ativo.
         private readonly List<(TextBox helena, TextBox marcos)> _scenarioInputs = new();
 
+        // Importação da API winmm para reprodução de efeito sonoro ao executar.
         [DllImport("winmm.dll", CharSet = CharSet.Auto)]
         private static extern int mciSendString(string command, IntPtr buffer, int bufferSize, IntPtr callback);
 
@@ -28,6 +56,9 @@ namespace Trabalho
             SetupEvents();
         }
 
+        /// <summary>
+        /// Registra os handlers de eventos dos controles da interface.
+        /// </summary>
         private void SetupEvents()
         {
             this.nudCenarios.ValueChanged += NudCenarios_ValueChanged;
@@ -80,6 +111,10 @@ namespace Trabalho
             return pnlInput.ClientSize.Width - 30 - scrollbar;
         }
 
+        /// <summary>
+        /// Ajusta dinamicamente a quantidade de cartões de cenário (1 a 10)
+        /// conforme o valor selecionado pelo usuário.
+        /// </summary>
         private void NudCenarios_ValueChanged(object? sender, EventArgs e)
         {
             int newCount = (int)nudCenarios.Value;
@@ -89,11 +124,13 @@ namespace Trabalho
 
             if (newCount > currentCount)
             {
+                // Adiciona novos cartões quando o usuário aumenta a quantidade.
                 for (int i = currentCount + 1; i <= newCount; i++)
                     AddScenarioCard(i);
             }
             else if (newCount < currentCount)
             {
+                // Remove cartões excedentes quando o usuário diminui a quantidade.
                 for (int i = currentCount; i > newCount; i--)
                     RemoveLastScenarioCard();
             }
@@ -135,6 +172,10 @@ namespace Trabalho
                 _scenarioInputs.RemoveAt(_scenarioInputs.Count - 1);
         }
 
+        /// <summary>
+        /// Cria um cartão visual com campos de entrada para Helena e Marcos,
+        /// incluindo contador de caracteres (máximo 80) e validação visual.
+        /// </summary>
         private Panel CreateScenarioCard(int number, int cardWidth)
         {
             Panel card = new Panel { BackColor = BG_CARD };
@@ -230,6 +271,10 @@ namespace Trabalho
             }
         }
 
+        /// <summary>
+        /// Processa todos os cenários: valida entradas, normaliza sequências,
+        /// chama o algoritmo LCS e exibe os resultados na área de texto.
+        /// </summary>
         private void BtnExecutar_Click(object? sender, EventArgs e)
         {
             PlayExecuteSound();
@@ -241,44 +286,47 @@ namespace Trabalho
                 return;
             }
 
+            var validacaoQtd = ValidacaoEntrada.ValidarQuantidadeCenarios(_scenarioInputs.Count);
+            if (!validacaoQtd.Valida)
+            {
+                AppendText($"\u26A0  {validacaoQtd.MensagemErro}\n", ERROR_RED);
+                return;
+            }
+
             for (int i = 0; i < _scenarioInputs.Count; i++)
             {
                 var (txtHelena, txtMarcos) = _scenarioInputs[i];
 
-                if (string.IsNullOrWhiteSpace(txtHelena.Text) || string.IsNullOrWhiteSpace(txtMarcos.Text))
+                if (i > 0)
+                    AppendText("\n", TEXT_MAIN);
+
+                var validacaoHelena = ValidacaoEntrada.ValidarSequencia(txtHelena.Text, "Helena");
+                if (!validacaoHelena.Valida)
                 {
-                    AppendText($"\u26A0  Cen\u00E1rio {i + 1}: preencha ambas as sequ\u00EAncias.\n\n", ERROR_RED);
+                    AppendText($"\u26A0  Cen\u00E1rio {i + 1} — {validacaoHelena.MensagemErro}\n\n", ERROR_RED);
                     continue;
                 }
 
-                string seqHelena = txtHelena.Text.ToLower();
-                string seqMarcos = txtMarcos.Text.ToLower();
-                if (seqHelena.Length > 80) seqHelena = seqHelena.Substring(0, 80);
-                if (seqMarcos.Length > 80) seqMarcos = seqMarcos.Substring(0, 80);
+                var validacaoMarcos = ValidacaoEntrada.ValidarSequencia(txtMarcos.Text, "Marcos");
+                if (!validacaoMarcos.Valida)
+                {
+                    AppendText($"\u26A0  Cen\u00E1rio {i + 1} — {validacaoMarcos.MensagemErro}\n\n", ERROR_RED);
+                    continue;
+                }
+
+                string seqHelena = validacaoHelena.ValorNormalizado;
+                string seqMarcos = validacaoMarcos.ValorNormalizado;
 
                 AppendText($"\u2500\u2500 Cen\u00E1rio {i + 1} ", PRIMARY, "Segoe UI Semibold", 12f);
                 AppendText(new string('\u2500', 36) + "\n", Color.FromArgb(50, 55, 85));
                 AppendText($"  Helena: \"{seqHelena}\"\n", TEXT_DIM);
                 AppendText($"  Marcos: \"{seqMarcos}\"\n\n", TEXT_DIM);
 
-                List<string> results = LcsAlgorithm.MatrizParaLCS(seqHelena, seqMarcos);
-
-                if (results.Count == 0 || (results.Count == 1 && results[0] == ""))
-                {
-                    AppendText("  Nenhuma subsequ\u00EAncia comum encontrada.\n\n", TEXT_DIM);
-                }
+                if (rbSomentePd.Checked)
+                    ExibirResultadoSomentePd(seqHelena, seqMarcos);
                 else
-                {
-                    int lcsLen = results[0].Length;
-                    AppendText($"  Tamanho da LCS: {lcsLen}    ", ACCENT);
-                    AppendText($"Encontradas: {results.Count}\n\n", ACCENT);
+                    ExibirResultadoPdBacktracking(seqHelena, seqMarcos);
 
-                    foreach (string palavra in results)
-                    {
-                        AppendText("    \u25B8 ", PRIMARY_LT);
-                        AppendText($"{palavra}\n", TEXT_MAIN);
-                    }
-                }
                 AppendText("\n", TEXT_MAIN);
             }
 
@@ -286,6 +334,73 @@ namespace Trabalho
             rtbResultados.ScrollToCaret();
         }
 
+        /// <summary>
+        /// Executa o Arquivo 1 (somente PD) e exibe apenas o tamanho da LCS.
+        /// </summary>
+        private void ExibirResultadoSomentePd(string seqHelena, string seqMarcos)
+        {
+            AppendText("  Modo: Somente Programa\u00E7\u00E3o Din\u00E2mica\n", ACCENT, "Segoe UI Semibold", 10.5f);
+            AppendText($"  Arquivo: {LcsProgramacaoDinamica.NomeArquivoEntrega}\n\n", TEXT_DIM);
+
+            int tamanhoLcs = LcsProgramacaoDinamica.ProcessarCenario(seqHelena, seqMarcos);
+
+            if (tamanhoLcs == 0)
+            {
+                AppendText("  Tamanho da LCS: 0\n", TEXT_DIM, "Segoe UI Semibold", 11f);
+            }
+            else
+            {
+                AppendText($"  Tamanho da LCS: {tamanhoLcs}\n", SUCCESS, "Segoe UI Semibold", 11f);
+            }
+
+            AppendText("\n", TEXT_MAIN);
+            AppendText("  \u2139  Limita\u00E7\u00E3o do modo Somente PD\n", PRIMARY_LT, "Segoe UI Semibold", 10.5f);
+            AppendText("  A Programa\u00E7\u00E3o Din\u00E2mica, sozinha, s\u00F3 preenche a matriz\n", TEXT_DIM);
+            AppendText("  com o comprimento m\u00E1ximo \u2014 ela n\u00E3o guarda nem reconstr\u00F3i\n", TEXT_DIM);
+            AppendText("  as letras das subsequ\u00EAncias.\n\n", TEXT_DIM);
+            AppendText("  Por isso n\u00E3o \u00E9 poss\u00EDvel listar as LCS usando apenas PD.\n", TEXT_MAIN);
+            AppendText("  Para ver todas as subsequ\u00EAncias, selecione\n", TEXT_MAIN);
+            AppendText("  \"PD + Backtracking\" e execute novamente.\n", ACCENT, "Segoe UI Semibold", 10.5f);
+        }
+
+        /// <summary>
+        /// Executa o Arquivo 2 (PD + Backtracking) e exibe todas as LCS encontradas.
+        /// </summary>
+        private void ExibirResultadoPdBacktracking(string seqHelena, string seqMarcos)
+        {
+            AppendText("  Modo: Programa\u00E7\u00E3o Din\u00E2mica + Backtracking\n", ACCENT, "Segoe UI Semibold", 10.5f);
+            AppendText($"  Arquivo: {LcsProgramacaoDinamicaBacktracking.NomeArquivoEntrega}\n\n", TEXT_DIM);
+
+            List<string> results = LcsProgramacaoDinamicaBacktracking.ProcessarCenario(seqHelena, seqMarcos);
+
+            if (results.Count == 0)
+            {
+                AppendText("  Nenhuma subsequ\u00EAncia comum encontrada.\n", TEXT_DIM);
+            }
+            else
+            {
+                int lcsLen = results[0].Length;
+                AppendText($"  Tamanho da LCS: {lcsLen}    ", ACCENT);
+                AppendText($"Encontradas: {results.Count}\n\n", ACCENT);
+
+                string saidaFormatada = LcsProgramacaoDinamicaBacktracking.FormatarSaidaCenario(results);
+                foreach (string linha in saidaFormatada.Split('\n'))
+                {
+                    if (string.IsNullOrEmpty(linha))
+                    {
+                        AppendText("\n", TEXT_MAIN);
+                        continue;
+                    }
+
+                    AppendText("    \u25B8 ", PRIMARY_LT);
+                    AppendText($"{linha}\n", TEXT_MAIN);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Restaura a interface ao estado inicial: 1 cenário vazio e mensagem de boas-vindas.
+        /// </summary>
         private void BtnLimpar_Click(object? sender, EventArgs e)
         {
             nudCenarios.ValueChanged -= NudCenarios_ValueChanged;
@@ -313,12 +428,18 @@ namespace Trabalho
         {
             rtbResultados.Clear();
             AppendText("Bem-vindo ao LCS\n\n", PRIMARY, "Segoe UI Semibold", 13f);
-            AppendText("  1.  Ajuste a quantidade de cen\u00E1rios no canto superior direito\n", TEXT_MAIN);
-            AppendText("  2.  Preencha as sequ\u00EAncias de Helena e Marcos\n", TEXT_MAIN);
-            AppendText("  3.  Clique em Executar LCS\n\n", TEXT_MAIN);
-            AppendText("  Letras min\u00FAsculas \u00B7 1 a 80 caracteres por sequ\u00EAncia\n", TEXT_DIM);
+            AppendText("  1.  Escolha o modo de execu\u00E7\u00E3o (Somente PD ou PD + Backtracking)\n", TEXT_MAIN);
+            AppendText("  2.  Ajuste a quantidade de cen\u00E1rios no canto superior direito\n", TEXT_MAIN);
+            AppendText("  3.  Preencha as sequ\u00EAncias de Helena e Marcos\n", TEXT_MAIN);
+            AppendText("  4.  Clique em Executar LCS\n\n", TEXT_MAIN);
+            AppendText("  Arquivo 1: LcsProgramacaoDinamica.cs  \u00B7  retorna o tamanho\n", TEXT_DIM);
+            AppendText("  Arquivo 2: LcsProgramacaoDinamicaBacktracking.cs  \u00B7  retorna todas as LCS\n\n", TEXT_DIM);
+            AppendText("  Letras a-z (mai\u00FAsculas convertidas) \u00B7 1 a 80 caracteres \u00B7 1 a 10 cen\u00E1rios\n", TEXT_DIM);
         }
 
+        /// <summary>
+        /// Escreve texto colorido no RichTextBox de resultados, com fonte opcional.
+        /// </summary>
         private void AppendText(string text, Color color, string? fontFamily = null, float? fontSize = null)
         {
             rtbResultados.SelectionStart = rtbResultados.TextLength;
