@@ -14,15 +14,11 @@
 //   - João Gabriel Soares da Silva Franco
 //   - Luiz Henrique Oliveira Coelho
 // -----------------------------------------------------------------------------
-// Descrição : Janela de créditos com rolagem animada dos nomes dos autores
-//             e reprodução de áudio de fundo.
+// Descrição : Janela de créditos com rolagem animada dos nomes dos autores.
 // =============================================================================
 
-using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.IO;
 
 namespace Trabalho
 {
@@ -31,10 +27,6 @@ namespace Trabalho
     /// </summary>
     public class CreditsForm : Form
     {
-        // Importação da API winmm para reprodução do áudio de créditos.
-        [DllImport("winmm.dll", CharSet = CharSet.Auto)]
-        private static extern int mciSendString(string command, IntPtr buffer, int bufferSize, IntPtr callback);
-
         private Label lblCredits;
         private System.Windows.Forms.Timer scrollTimer;
 
@@ -69,9 +61,9 @@ namespace Trabalho
             this.lblCredits.Name = "lblCredits";
             this.lblCredits.TabIndex = 0;
             this.lblCredits.TextAlign = ContentAlignment.MiddleCenter;
-            
+
             // Texto exibido durante a animação de rolagem.
-            string creditsText = 
+            string creditsText =
                 "TRABALHO FINAL FPAA\n\n" +
                 "Desenvolvido por:\n\n" +
                 "João Gabriel Soares Da Silva Franco\n\n" +
@@ -81,7 +73,7 @@ namespace Trabalho
                 "Gabriel Henrique Machado Magri\n\n" +
                 "Gabriel Amorim Gonçalves Silva\n\n\n\n" +
                 "Obrigado por usar!";
-                
+
             this.lblCredits.Text = creditsText;
 
             // Timer controla a velocidade da animação (~33 fps).
@@ -94,24 +86,11 @@ namespace Trabalho
         }
 
         /// <summary>
-        /// Posiciona o label abaixo da tela, inicia o áudio e a animação.
+        /// Posiciona o label abaixo da tela e inicia a animação.
         /// </summary>
         private void CreditsForm_Load(object? sender, EventArgs e)
         {
             this.lblCredits.Location = new Point((this.ClientSize.Width - this.lblCredits.Width) / 2, this.ClientSize.Height);
-            
-            try
-            {
-                string audioPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "creditos.mp3");
-                if (File.Exists(audioPath))
-                {
-                    mciSendString("close creditsMusic", IntPtr.Zero, 0, IntPtr.Zero);
-                    mciSendString($"open \"{audioPath}\" type mpegvideo alias creditsMusic", IntPtr.Zero, 0, IntPtr.Zero);
-                    mciSendString("play creditsMusic", IntPtr.Zero, 0, IntPtr.Zero);
-                }
-            }
-            catch { }
-
             this.scrollTimer.Start();
         }
 
@@ -129,18 +108,11 @@ namespace Trabalho
         }
 
         /// <summary>
-        /// Para a animação e encerra a reprodução do áudio ao fechar a janela.
+        /// Para a animação ao fechar a janela.
         /// </summary>
         private void CreditsForm_FormClosing(object? sender, FormClosingEventArgs e)
         {
             this.scrollTimer.Stop();
-            
-            try
-            {
-                mciSendString("stop creditsMusic", IntPtr.Zero, 0, IntPtr.Zero);
-                mciSendString("close creditsMusic", IntPtr.Zero, 0, IntPtr.Zero);
-            }
-            catch { }
         }
     }
 }

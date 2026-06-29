@@ -20,7 +20,6 @@
 // =============================================================================
 
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Trabalho
@@ -45,10 +44,6 @@ namespace Trabalho
 
         // Lista que mantém os pares de TextBox (Helena/Marcos) de cada cenário ativo.
         private readonly List<(TextBox helena, TextBox marcos)> _scenarioInputs = new();
-
-        // Importação da API winmm para reprodução de efeito sonoro ao executar.
-        [DllImport("winmm.dll", CharSet = CharSet.Auto)]
-        private static extern int mciSendString(string command, IntPtr buffer, int bufferSize, IntPtr callback);
 
         public MainForm()
         {
@@ -254,30 +249,12 @@ namespace Trabalho
             return card;
         }
 
-        private void PlayExecuteSound()
-        {
-            try
-            {
-                string audioPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "faaah.mp3");
-                if (File.Exists(audioPath))
-                {
-                    mciSendString("close executeSfx", IntPtr.Zero, 0, IntPtr.Zero);
-                    mciSendString($"open \"{audioPath}\" type mpegvideo alias executeSfx", IntPtr.Zero, 0, IntPtr.Zero);
-                    mciSendString("play executeSfx", IntPtr.Zero, 0, IntPtr.Zero);
-                }
-            }
-            catch
-            {
-            }
-        }
-
         /// <summary>
         /// Processa todos os cenários: valida entradas, normaliza sequências,
         /// chama o algoritmo LCS e exibe os resultados na área de texto.
         /// </summary>
         private void BtnExecutar_Click(object? sender, EventArgs e)
         {
-            PlayExecuteSound();
             rtbResultados.Clear();
 
             if (_scenarioInputs.Count == 0)
